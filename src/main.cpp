@@ -5,13 +5,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#ifndef IMGUI_DISABLE
-#include "imgui_internal.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
+#include <filesystem>
+
+#pragma comment(lib, "legacy_stdio_definitions.lib")
 
 //----------------------------------------------//
 static unsigned int g_map;          // 假设这是你的图像纹理 ID
@@ -20,13 +21,12 @@ static ImVec2 g_screen_center = {0.0f, 0.0f};
 static std::string g_image_path = "\\photograph\\1-1.png";
 //----------------------------------------------//
 unsigned int CreateTextureFromImage(const char* path);
-void ImGui::ShowRadarWindow(bool* p_open, ImVec2 display_size);
+void ShowRadarWindow(bool* p_open, ImVec2 display_size);
 //-----------------------------------------------//
 
 int main(int, char**) {
     SetConsoleOutputCP(CP_UTF8);
     if (!glfwInit()) {
-        LOGE("Failed to initialize GLFW\n");
         return -1;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -35,7 +35,6 @@ int main(int, char**) {
     glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
     GLFWwindow* window1 = glfwCreateWindow(1080, 1080, "Window 1", NULL, NULL);
     if (!window1) {
-        LOGE("Failed to create GLFW window 1\n");
         glfwTerminate();
         return -1;
     }
@@ -47,7 +46,6 @@ int main(int, char**) {
     ImGui_ImplOpenGL3_Init();
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        LOGE("Failed to initialize GLAD for window 2\n");
         glfwDestroyWindow(window1);
         glfwTerminate();
         return -1;
@@ -55,6 +53,9 @@ int main(int, char**) {
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::string CurrentDirectory = currentPath.string();
     g_map = CreateTextureFromImage(std::string(CurrentDirectory + g_image_path).c_str());
+    int a = 15;
+    int b = a << 1;
+    std::cout << b << std::endl;
     while (!glfwWindowShouldClose(window1)) {
         glfwPollEvents();
         ImGui::SetCurrentContext(ctx1);
@@ -63,7 +64,7 @@ int main(int, char**) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
         bool show_radar_window = true;
-        ImGui::ShowRadarWindow(&show_radar_window, ImVec2((float)1080, (float)1080));
+        ShowRadarWindow(&show_radar_window, ImVec2((float)1080, (float)1080));
         ImGui::Render();
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -107,7 +108,7 @@ unsigned int CreateTextureFromImage(const char* path) {
     return textureID;
 }
 
-void ImGui::ShowRadarWindow(bool* p_open, ImVec2 display_size) {
+void ShowRadarWindow(bool* p_open, ImVec2 display_size) {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing Dear ImGui context. Refer to examples app!");
 
     ImGuiWindowFlags window_flags = 0;
