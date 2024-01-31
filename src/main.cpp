@@ -15,9 +15,9 @@
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 
 //----------------------------------------------//
-static unsigned int g_map;          // 假设这是你的图像纹理 ID
+static unsigned int g_map;          // 图像纹理 ID
 static float g_zoom_factor = 0.0f;  // 初始缩放因子
-static ImVec2 g_screen_center = {0.0f, 0.0f};
+static ImVec2 g_screen_center = {0.0f, 0.0f}; //平移偏移
 static std::string g_image_path = "\\photograph\\1-1.png";
 //----------------------------------------------//
 unsigned int CreateTextureFromImage(const char* path);
@@ -53,9 +53,6 @@ int main(int, char**) {
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::string CurrentDirectory = currentPath.string();
     g_map = CreateTextureFromImage(std::string(CurrentDirectory + g_image_path).c_str());
-    int a = 15;
-    int b = a << 1;
-    std::cout << b << std::endl;
     while (!glfwWindowShouldClose(window1)) {
         glfwPollEvents();
         ImGui::SetCurrentContext(ctx1);
